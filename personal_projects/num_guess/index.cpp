@@ -39,7 +39,8 @@ int main(){
 
         if(randomNum != guess)
         {
-            cout << "Sorry, You guessed wrong." << '\n';
+            
+           cout << ((guess > randomNum) ? "Ouch! Too high!" : "Oops! Too low!") << '\n';
             isOver = userGuess == TRY;
 
             if(isOver){
