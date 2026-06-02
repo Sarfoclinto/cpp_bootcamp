@@ -34,6 +34,10 @@ int main(){
         cout << "Enter your guessed number from 0 through 100: ";
         cin >> guess;
 
+        // to prevent infinite display of unsupposed code
+        // std::cin.clear();
+        // fflush(stdin);
+
         userGuess++;
         cout << "You've made " << userGuess << " " << ((userGuess == 1) ? "guess" : "guesses") << '\n';
 
