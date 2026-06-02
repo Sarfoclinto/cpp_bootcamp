@@ -36,8 +36,8 @@
 
  
   // functions
-  string compute_results(const Move& user, const Move& computer);
-  Move compute_cMove();
+  string computeResults(const Move& user, const Move& computer);
+  Move computeComputerMove();
   Move parseMove(string input);
   string moveToString(Move& move);
   void clearScreen();
@@ -77,10 +77,10 @@ int main(){
         }
 
         // get computer move
-        cMove = compute_cMove();
+        cMove = computeComputerMove();
 
         // compute results
-        result = compute_results(userMove, cMove);
+        result = computeResults(userMove, cMove);
 
         // compute scores
         if(result == WIN){
@@ -108,47 +108,36 @@ int main(){
     return 0;
 }
 
-string compute_results(const Move& user, const Move& computer){
-    if(user == Move::Rock){
-        if(computer == Move::Rock){
-            return TIE;
-        }else if(computer == Move::Paper){
-            return LOSE;
-        }else{
-            return WIN;
-        }
-    } else if(user == Move::Paper){
-        if(computer == Move::Rock){
-            return WIN;
-        }else if(computer == Move::Paper){
-            return TIE;
-        }else{
-            return LOSE;
-        }
-    }else if(user == Move::Scissors){
-        if(computer == Move::Rock){
-            return LOSE;
-        }else if(computer == Move::Paper){
-            return WIN;
-        }else{
-            return TIE;
-        }
-    }else{
-        return INVALID;
-    }
-};
-Move compute_cMove(){
-    // Generate a number from 1 to 100
-    int random = rand() % 101;
+string computeResults(const Move& user, const Move& computer){
+    if(user == computer)
+    return TIE;
 
-    // Deduce computer move
-    if(random > 0 && random <= 30){
-        return Move::Rock;
-    }else if(random > 30 && random <= 60){
-        return Move::Paper;
-    }else{
-        return Move::Scissors;
-    };
+    if(
+        (user == Move::Rock     && computer == Move::Scissors) ||
+        (user == Move::Paper    && computer == Move::Rock) ||
+        (user == Move::Scissors && computer == Move::Paper)
+    )
+    {
+        return WIN;
+    }
+
+return LOSE;
+};
+Move computeComputerMove(){
+    // Generate a number from 1 to 100
+    int random = rand() % 3;
+
+    switch(random)
+    {
+        case 0:
+            return Move::Rock;
+
+        case 1:
+            return Move::Paper;
+
+        default:
+            return Move::Scissors;
+    }
 };
 Move parseMove(string input)
 {
@@ -173,7 +162,7 @@ Move parseMove(string input)
     if(input == "Q" || input == "q" ||
        input == "quit" || input == "Quit" || input == "QUIT")
     {
-        return Move::Scissors;
+        return Move::Quit;
     }
 
     return Move::Invalid;
@@ -202,3 +191,35 @@ void clearScreen()
 {
     cout << "\033[2J\033[H";
 }
+
+
+/**
+ Others
+1. Hangman
+ Word: _ _ _ _ _
+ Guess: a
+ Word: a _ _ _ a 
+ _to learn strings, loops, functions, character handing, arrays/vectors
+
+2. Tic-Tac-Toe
+ X | O | X
+-----------
+ O | X |
+-----------
+   | O |
+_to learn 2D arrays, game state, win detection, breaking large problems into functions
+
+3.To-Do list
+Add task
+Delete task
+View tasks
+Save tasks
+vector<string> -> struct Task -> File I/O
+
+4. Inventory System
+Add Product
+Remove Product
+Search Product
+View Inventory
+_to learn: Structs, vectors, searching, crud operations
+ */
