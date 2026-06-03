@@ -1,4 +1,4 @@
-// v1.0.0 -> Personal and Raw version
+// v1.1.0 -> Improved version of the hangman game with better user experience and code structure.
 #include <iostream>
 #include <cstdlib>
 
@@ -17,13 +17,15 @@ using std::endl;
 
 // functions
 string computeWord();
-void renderWord(const char chars[], int len);
-string charsToString(const char chars[], int len);
+void renderWord(const string& chars);
+void renderGuessedLetters(const string letters);
 
 int main(){
-    string word, strGenWord = "";
+    srand(time(nullptr));
+
+    string word, guessedLetters;
     char guess;
-    int tries = 0;
+    int tries = 0, lives = 6;
     
     word = computeWord();
     int wordLength = word.length();
@@ -31,33 +33,58 @@ int main(){
     cout << "\n****************************** HANGMAN ******************************\n" << endl;
     cout << "You've got to guess a " << wordLength << " lettered word with a single letter guess at a time." << endl;
 
-    char genWord[wordLength]; 
-    for(int i = 0; i < wordLength; i++){
-        genWord[i] = '_';
-    }
-    renderWord(genWord, wordLength);
+    string genWord(wordLength, '_');
 
-    while(word != strGenWord){
-        cout << "\nQuess letter: ";
+    for(int i = 0; i < wordLength; i++){
+        if(word[i] == ' ')
+            genWord[i] = ' ';
+    }
+
+    renderWord(genWord);
+
+    while(word != genWord && lives != 0){
+        cout << "Live (" << lives <<") " << endl;
+        if(guessedLetters.length()){
+            renderGuessedLetters(guessedLetters);
+        }
+        cout << ((guessedLetters.length() > 0) ? "\nQuess letter: " : "Quess letter: ");
         cin >> guess;
 
-        int position = word.find(guess);
+        if(guessedLetters.find(guess) != string::npos){
+            cout << "Already guessed that letter.\n";
+            cout << "\n";
+            continue;
+        }
+        guessedLetters += guess;
+
+        bool found = false;
+        for(int i = 0; i < wordLength; i++){
+            if(tolower(word[i]) == tolower(guess)){
+                genWord[i] = word[i];
+                found = true;
+            }
+        }
         
-        if(position > -1){
-            genWord[position] = guess;
-            renderWord(genWord, wordLength);
-        }else{
-            renderWord(genWord, wordLength);
+        if(found){
+            renderWord(genWord);
+        }
+        else{
+            lives--;
+            renderWord(genWord);
             cout << "\nOops! not there.\n";
-        }     
+        }    
         tries++;   
-        strGenWord = charsToString(genWord,wordLength);
-        cout << "\nstrGenWord: " << strGenWord << endl;
     }
 
     
-    cout << "\nCongratulations! You guessed the word: " << word << endl;
-    cout << "Finally! After " << tries << " tries, you made it." << endl;
+    if(word == genWord){
+        cout << "\nCongratulations! You guessed the word: " << word << endl;
+        cout << "Finally! After " << tries << " tries, you made it." << endl;
+    }
+    else{
+        cout << "\nGame Over!" << endl;
+        cout << "The word was: " << word << endl;
+    }
     cout << "See Ya Another Time" << endl;
 
 
@@ -67,7 +94,6 @@ int main(){
 
 // functions
 string computeWord(){
-    srand(time(0));
     string words[] = {"hello", "world", "Hec Sherlock", "apple", "car", "shop", "FBI", "face"};
 
     // compute a random with the size of words
@@ -78,17 +104,16 @@ string computeWord(){
 
     return words[idx];
 };
-void renderWord(const char chars[], int len){
+void renderWord(const string& chars){
     cout << "\nWord: ";
-    for(int i = 0; i < len; i++){
-        cout << chars[i] << " ";
+    for(char c : chars){
+        cout << c << " ";
     }
+    cout << endl;
 };
-string charsToString(const char chars[], int len){
-    string word;
-    for(int i = 0; i < len; i++){
-        word+=chars[i];
+void renderGuessedLetters(const string letters){
+    cout << "Guessed letters: ";
+    for(char c : letters){
+        cout << c << ", ";
     }
-
-    return word;
 }
